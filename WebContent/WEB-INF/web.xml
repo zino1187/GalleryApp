@@ -20,4 +20,46 @@
      Welcome to Tomcat
   </description>
 
+	<!-- 비즈니스 로직은 컨트롤러보다 생성이 앞서야 하므로, 톰켓 가동시 이미 생성되어야 한다..
+	따라서 톰켓이 가동되는 시점을 알수있는 리스너인 로드~리스너를 이용해본다... -->
+	<listener>
+-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<!-- service.xml 의 위치지정 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:app/com/service/service.xml</param-value>
+	</context-param>
+	
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>enconding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+	<!-- 서블릿 매핑 -->
+	<servlet>
+		<servlet-name>dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/dispatcher-servlet.xml</param-value>
+		</init-param>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>dispatcher</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
 </web-app>
