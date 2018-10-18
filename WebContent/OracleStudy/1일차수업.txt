@@ -1,0 +1,104 @@
+SQL> show user
+USER is "SYS"
+SQL> --시스템 계정의 비밀번호를 아예 바꿔버리자
+SQL> alter user system
+  2  identified by manager;
+
+User altered.
+
+SQL> --system 계정으로 로그인하낟
+SQL> conn system/manager
+Connected.
+SQL> show user
+USER is "SYSTEM"
+SQL> --데이터베이스 생성
+SQL> create tablespace itbank
+  2  datafile 'C:\oraclexe\app\oracle\oradata\XE\itbank.dbf' size 10m;
+
+Tablespace created.
+
+SQL> --유저생성 및 사용할 디비 설정
+SQL> create user itbank
+  2  identified by itbank
+  3  default tablespace itbank
+  4  quota unlimited on itbank;
+
+User created.
+
+SQL> --각종 필요한 권한 부여하기
+SQL> --권한 부여는 sql 3가지 유형(DDL, DML, DCL ) DCL 이다..
+SQL> grant create session, create table, create sequence to itbank;
+
+Grant succeeded.
+
+SQL> show user
+USER is "SYSTEM"
+SQL> conn itbank/itbank
+Connected.
+SQL> show user
+USER is "ITBANK"
+SQL> --테이블 생성하기
+SQL> create table gallery(
+  2  gallery_id number primary key
+  3  , writer varchar2(30)
+  4  ,title varchar2(200)
+  5  ,content clob
+  6  ,regdate date default sysdate
+  7  ,hit number default 0
+  8  ,img varchar2(14)
+  9  );
+
+Table created.
+
+SQL> --시퀀스 생성하기
+SQL> create sequnece seq_gallery
+  2  increment by 1
+  3  start with 1;
+create sequnece seq_gallery
+       *
+ERROR at line 1:
+ORA-00901: invalid CREATE command 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  create sequence seq_gallery
+  2  increment by 1
+  3* start with 1
+SQL> /
+
+Sequence created.
+
+SQL> --테이블이 어떤게 생성되엇는지 조회하기 (  딕셔너리 =시스템 테이블)
+SQL> ed
+Wrote file afiedt.buf
+
+  1  create sequence seq_gallery
+  2  increment by 1
+  3* start with 1
+SQL> ;
+  1  create sequence seq_gallery
+  2  increment by 1
+  3* start with 1
+SQL> /
+create sequence seq_gallery
+                *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object 
+
+
+SQL> select table_name from user_tables;
+
+TABLE_NAME                                                                      
+------------------------------------------------------------                    
+GALLERY                                                                         
+
+SQL> --시퀀스 조회하기
+SQL> select sequence_name from user_sequences;
+
+SEQUENCE_NAME                                                                   
+------------------------------------------------------------                    
+SEQ_GALLERY                                                                     
+
+SQL> spool off
